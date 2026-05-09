@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons-vue'
+import { CaretDownFilled, CaretUpFilled } from '@ant-design/icons-vue'
 import type { ChartData } from 'chart.js'
 import { theme } from 'ant-design-vue'
 import { computed, ref, watch } from 'vue'
@@ -36,7 +36,6 @@ import { DEFAULT_ROOT_DEPARTMENT_ID, scopeIntensityMultiplier, type DepartmentNo
 import {
   aggregateKpiForScope,
   formatKpiDeltaTooltip,
-  formatKpiVisibleDeltaPercent,
   kpiDeltaForPeriod,
   type KpiMetricAgg,
 } from '@/utils/pulseSummaryKpi'
@@ -207,6 +206,17 @@ function kpiMetricDelta(metric: KpiMetricAgg) {
 function kpiMetricDeltaTooltipTitle(metric: KpiMetricAgg) {
   const { pct, abs } = kpiMetricDelta(metric)
   return formatKpiDeltaTooltip(pct, abs, metric.deltaUnit)
+}
+
+function formatDeltaPercent(value: number) {
+  if (value === 0) return '0%'
+  return `${Math.abs(value).toFixed(1)}%`
+}
+
+function getDeltaTagColor(value: number): 'success' | 'error' | undefined {
+  if (value > 0) return 'success'
+  if (value < 0) return 'error'
+  return undefined
 }
 
 const todayShort = computed(() => {
@@ -566,18 +576,12 @@ const problematicLegendItems = computed(() =>
             <div class="kpi-metric-card__title-row">
               <span class="kpi-metric-card__title">{{ m.title }}</span>
               <a-tooltip :title="kpiMetricDeltaTooltipTitle(m)" :trigger="['hover', 'focus']">
-                <span
-                  tabindex="0"
-                  class="metric-card-delta"
-                  :class="{
-                    'metric-card-delta--positive': kpiMetricDelta(m).pct > 0,
-                    'metric-card-delta--negative': kpiMetricDelta(m).pct < 0,
-                    'metric-card-delta--neutral': kpiMetricDelta(m).pct === 0,
-                  }"
-                >
-                  <component v-if="kpiMetricDelta(m).pct > 0" :is="ArrowUpOutlined" />
-                  <component v-if="kpiMetricDelta(m).pct < 0" :is="ArrowDownOutlined" />
-                  <span>{{ formatKpiVisibleDeltaPercent(kpiMetricDelta(m).pct) }}</span>
+                <span class="metric-delta-tag-tooltip-anchor" tabindex="0">
+                  <a-tag :color="getDeltaTagColor(kpiMetricDelta(m).pct)" class="metric-delta-tag">
+                    <CaretUpFilled v-if="kpiMetricDelta(m).pct > 0" />
+                    <CaretDownFilled v-else-if="kpiMetricDelta(m).pct < 0" />
+                    <span>{{ formatDeltaPercent(kpiMetricDelta(m).pct) }}</span>
+                  </a-tag>
                 </span>
               </a-tooltip>
             </div>
@@ -664,9 +668,10 @@ const problematicLegendItems = computed(() =>
                 <a-select
                   v-model:value="selectedNfaTypes"
                   mode="multiple"
-                  :max-tag-count="2"
+                  :max-tag-count="1"
                   :options="nfaTypeOptions"
                   placeholder="Выберите тип НФА"
+                  class="chart-card-control-field"
                   style="width: 280px; max-width: 280px"
                 />
                 <a-segmented v-model:value="assetsMetric" size="middle" :options="metricSegmentOptions" />
@@ -772,11 +777,13 @@ const problematicLegendItems = computed(() =>
                   ОЦДИ
                 </a-button>
                 <a-select
+                  v-model:value="spheresApplicationFilter"
                   mode="multiple"
-                  max-tag-count="responsive"
+                  :max-tag-count="1"
                   :options="sphereSelectOptions"
                   placeholder="Сфера применения"
                   class="chart-card-control-field"
+                  style="width: 280px; max-width: 280px"
                 />
                 <a-segmented
                   v-model:value="spheresOsMetric"
@@ -979,16 +986,15 @@ const problematicLegendItems = computed(() =>
 .kpi-metric-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 4px;
   min-width: 0;
 }
 
 .kpi-metric-card__title-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  column-gap: 12px;
-  row-gap: 8px;
+  gap: 12px;
   min-width: 0;
 }
 
@@ -999,29 +1005,31 @@ const problematicLegendItems = computed(() =>
   color: rgba(0, 0, 0, 0.88);
   flex: 1;
   min-width: 0;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
-.metric-card-delta {
+.metric-delta-tag-tooltip-anchor {
+  display: inline-flex;
+  flex-shrink: 0;
+  max-width: 100%;
+  outline-offset: 2px;
+  cursor: help;
+}
+
+.metric-delta-tag {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  white-space: nowrap;
+  margin-inline-end: 0;
+  line-height: 20px;
   cursor: help;
-  font-size: 12px;
-  line-height: 1.5715;
-  outline-offset: 2px;
 }
 
-.metric-card-delta--positive {
-  color: var(--ant-color-success);
-}
-
-.metric-card-delta--negative {
-  color: var(--ant-color-error);
-}
-
-.metric-card-delta--neutral {
-  color: var(--ant-color-text-secondary);
+.metric-delta-tag :deep(.anticon) {
+  font-size: 10px;
 }
 
 .kpi-metric-card__values {
@@ -1070,13 +1078,15 @@ const problematicLegendItems = computed(() =>
 .assets-bar-chart-card :deep(.ant-card-head) {
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   min-height: unset;
-  padding: 14px 20px 10px;
+  height: 56px;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .chart-card :deep(.ant-card-head-wrapper) {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px 16px;
   row-gap: 10px;
   width: 100%;

@@ -15,13 +15,6 @@ export interface KpiMetricAgg {
   deltaAbsoluteYear: number
 }
 
-/** Подпись процента в карточке (без «за неделю» и т.п.). Unicode − для отрицательных. */
-export function formatKpiVisibleDeltaPercent(pct: number): string {
-  if (pct === 0) return '0%'
-  const sign = pct > 0 ? '+' : '\u2212'
-  return `${sign}${Math.abs(pct).toFixed(1)}%`
-}
-
 /** Текст подсказки: сравнение с предыдущим периодом выбранного типа. */
 export function formatKpiDeltaTooltip(pct: number, abs: number, deltaUnit: string): string {
   if (pct === 0) return 'Без изменений относительно прошлого периода'
