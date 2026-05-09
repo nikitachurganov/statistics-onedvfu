@@ -1,0 +1,95 @@
+[
+  {
+    "title": "Дирекция кампуса",
+    "value": "campus-directorate",
+    "key": "campus-directorate",
+    "children": [
+      {
+        "title": "Инженерная служба",
+        "value": "engineering-service",
+        "key": "engineering-service"
+      },
+      {
+        "title": "Служба эксплуатации",
+        "value": "operations-service",
+        "key": "operations-service"
+      },
+      {
+        "title": "Служба безопасности",
+        "value": "security-service",
+        "key": "security-service"
+      },
+      {
+        "title": "Административный отдел",
+        "value": "administrative-office",
+        "key": "administrative-office"
+      }
+    ]
+  },
+  {
+    "title": "Школа цифровой экономики",
+    "value": "digital-economy-school",
+    "key": "digital-economy-school",
+    "children": [
+      {
+        "title": "Кафедра информационных систем",
+        "value": "information-systems-department",
+        "key": "information-systems-department"
+      },
+      {
+        "title": "Лаборатория анализа данных",
+        "value": "data-analytics-lab",
+        "key": "data-analytics-lab"
+      },
+      {
+        "title": "Центр цифровых продуктов",
+        "value": "digital-products-center",
+        "key": "digital-products-center"
+      }
+    ]
+  },
+  {
+    "title": "Школа биомедицины",
+    "value": "biomedicine-school",
+    "key": "biomedicine-school",
+    "children": [
+      {
+        "title": "Лабораторный комплекс",
+        "value": "laboratory-complex",
+        "key": "laboratory-complex"
+      },
+      {
+        "title": "Кафедра медицинских технологий",
+        "value": "medical-technologies-department",
+        "key": "medical-technologies-department"
+      },
+      {
+        "title": "Центр научного оборудования",
+        "value": "scientific-equipment-center",
+        "key": "scientific-equipment-center"
+      }
+    ]
+  },
+  {
+    "title": "Административно-хозяйственное управление",
+    "value": "administrative-facilities-office",
+    "key": "administrative-facilities-office",
+    "children": [
+      {
+        "title": "Отдел материально-технического обеспечения",
+        "value": "material-support-office",
+        "key": "material-support-office"
+      },
+      {
+        "title": "Отдел учета имущества",
+        "value": "property-accounting-office",
+        "key": "property-accounting-office"
+      },
+      {
+        "title": "Складской комплекс",
+        "value": "warehouse-complex",
+        "key": "warehouse-complex"
+      }
+    ]
+  }
+]

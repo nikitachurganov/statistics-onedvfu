@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import { RouterView } from 'vue-router'
+</script>
+
+<template>
+  <div class="app-mount">
+    <RouterView />
+  </div>
+</template>
+
+<style scoped>
+.app-mount {
+  height: 100%;
+}
+</style>
